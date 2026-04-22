@@ -17,13 +17,13 @@ app.get("/user/:username", async (req, res) => {
       }
     );
 
-    const data = await r.json();
+    const text = await r.text(); // 👈 pega resposta crua
+    console.log("RESPOSTA API:", text); // 👈 mostra no Render logs
 
-    // 🔥 debug (importante)
-    console.log(data);
+    const data = JSON.parse(text);
 
     if (!data || !data.data) {
-      return res.json({ error: "API não respondeu certo" });
+      return res.json({ error: "API respondeu errado", raw: text });
     }
 
     res.json({
@@ -37,8 +37,8 @@ app.get("/user/:username", async (req, res) => {
     });
 
   } catch (err) {
-    console.log(err);
-    res.json({ error: "erro real na API" });
+    console.log("ERRO REAL:", err);
+    res.json({ error: "erro real", details: err.toString() });
   }
 });
 
