@@ -3,7 +3,7 @@ const fetch = require("node-fetch");
 
 const app = express();
 
-const API_KEY = "COLOCA_SUA_KEY_AQUI";
+const API_KEY = "28835845eamsh938770a2b856eb4p142a75jsn547fc3959c2e";
 
 app.get("/user/:username", async (req, res) => {
   try {
@@ -19,17 +19,26 @@ app.get("/user/:username", async (req, res) => {
 
     const data = await r.json();
 
+    // 🔥 debug (importante)
+    console.log(data);
+
+    if (!data || !data.data) {
+      return res.json({ error: "API não respondeu certo" });
+    }
+
     res.json({
-      username: data.data.user.nickname,
-      bio: data.data.user.signature,
-      followers: data.data.stats.followerCount,
-      following: data.data.stats.followingCount,
-      likes: data.data.stats.heartCount,
-      videos: data.data.stats.videoCount
+      username: data.data.user?.nickname || "N/A",
+      bio: data.data.user?.signature || "N/A",
+      followers: data.data.stats?.followerCount || 0,
+      following: data.data.stats?.followingCount || 0,
+      likes: data.data.stats?.heartCount || 0,
+      videos: data.data.stats?.videoCount || 0,
+      avatar: data.data.user?.avatarLarger || ""
     });
 
-  } catch {
-    res.status(500).json({ error: "erro" });
+  } catch (err) {
+    console.log(err);
+    res.json({ error: "erro real na API" });
   }
 });
 
